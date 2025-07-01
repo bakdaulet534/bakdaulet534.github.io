@@ -5,130 +5,94 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Бакдаулет — сайт</title>
   <style>
-    :root {
-      --bg: #f9f9f9;
-      --text: #2d3436;
-      --card-bg: #ffffff;
-      --accent: #6c5ce7;
-      --accent-hover: #00cec9;
-    }
-    body.dark {
-      --bg: #1e1e2f;
-      --text: #f1f1f1;
-      --card-bg: #2a2a3d;
-    }
     body {
-      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      background: #1e1e2f;
+      color: white;
+      margin: 0;
+      padding: 20px;
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
-      padding: 20px;
       min-height: 100vh;
-      transition: background 0.3s, color 0.3s;
-    }
-    .theme-toggle {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      cursor: pointer;
-      background: var(--accent);
-      color: white;
-      padding: 6px 12px;
-      border-radius: 20px;
-      border: none;
-      font-size: 14px;
     }
     .card {
-      background: var(--card-bg);
+      background: #2a2a3d;
       border-radius: 20px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
       padding: 30px;
-      max-width: 400px;
       width: 100%;
-      text-align: center;
-      transition: background 0.3s;
-    }
-    .avatar {
-      width: 120px;
-      border-radius: 50%;
-      margin-bottom: 20px;
+      max-width: 400px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
     }
     h1 {
-      margin-bottom: 10px;
-    }
-    .button {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s;
-      margin-top: 10px;
-    }
-    .button:hover {
-      background: var(--accent-hover);
-    }
-    form {
-      margin-top: 30px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      text-align: center;
+      margin-bottom: 20px;
     }
     input, textarea {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 14px;
-      background: #fff;
-    }
-    body.dark input, body.dark textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
       background: #333;
       color: white;
-      border: 1px solid #555;
     }
-    @media (max-width: 500px) {
-      .card {
-        margin: 10px;
-        padding: 25px;
-      }
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #6c5ce7;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #00cec9;
     }
   </style>
 </head>
 <body>
 
-  <button class="theme-toggle" onclick="toggleTheme()">🌗 Тема</button>
-
   <div class="card">
-    <img src="https://i.imgur.com/4AiXzf8.jpeg" alt="Аватар" class="avatar" />
-    <h1>Бакдаулет</h1>
-    <p>Будущий мастер фронтенда. Создаю идеальные сайты 💻</p>
-
-    <button class="button" onclick="alert('Связаться: @toxsi534')">Связаться</button>
-
-    <form onsubmit="sendMessage(event)">
+    <h1>Связь с Бакдаулетом</h1>
+    <form id="tgForm">
       <input type="text" id="name" placeholder="Ваше имя" required />
       <textarea id="message" placeholder="Ваше сообщение" rows="4" required></textarea>
-      <button type="submit" class="button">Отправить</button>
+      <button type="submit">Отправить</button>
     </form>
+    <p id="status" style="text-align:center;"></p>
   </div>
 
   <script>
-    function toggleTheme() {
-      document.body.classList.toggle('dark');
-    }
+    const TOKEN = "7932098203:AAEIwkfvq6IeKm25QjwmyVKwEYnuEhJhFKs";
+    const CHAT_ID = "6587265073";
+    const API = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
 
-    function sendMessage(e) {
+    document.getElementById("tgForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      const name = document.getElementById('name').value;
-      const message = document.getElementById('message').value;
-      alert(`Спасибо, ${name}!\nВаше сообщение отправлено:\n"${message}"`);
-    }
+
+      const name = document.getElementById("name").value;
+      const message = document.getElementById("message").value;
+      const text = `📬 Новое сообщение с сайта:\n👤 Имя: ${name}\n💬 Сообщение: ${message}`;
+
+      fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: text })
+      })
+      .then(res => {
+        if (res.ok) {
+          document.getElementById("status").textContent = "✅ Сообщение отправлено!";
+        } else {
+          document.getElementById("status").textContent = "❌ Ошибка при отправке.";
+        }
+      })
+      .catch(err => {
+        document.getElementById("status").textContent = "⚠️ Не удалось подключиться.";
+      });
+    });
   </script>
 
 </body>
